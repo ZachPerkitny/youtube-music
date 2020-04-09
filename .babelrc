@@ -1,0 +1,21 @@
+{
+    "plugins": [
+        [
+            "module-resolver",
+            {
+                "cwd": "babelrc",
+                "root": ["./src"],
+                "extensions": [".js",],
+                "alias": {
+                    "_actions": "./src/actions",
+                    "_assets": "./src/assets",
+                    "_components": "./src/components",
+                    "_constants": "./src/constants",
+                    "_reducers": "./src/reducers",
+                    "_screens": "./src/screens",
+                    "_utils": "./src/utils",
+                }
+            }
+        ]
+    ]
+}
