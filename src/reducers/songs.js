@@ -2,8 +2,8 @@ import * as constants from '_constants/songs';
 
 export default function(state={
     isAdding: false,
+    isDeleting: false,
     isLoading: false,
-    nowPlaying: null,
     songs: [],
 }, action) {
     switch (action.type) {
@@ -33,9 +33,21 @@ export default function(state={
             return Object.assign({}, state, {
                 isLoading: false,
             });
-        case constants.PLAY_SONG:
+        case constants.DELETE_SONG_START:
             return Object.assign({}, state, {
-                nowPlaying: action.song,
+                isDeleting: true,
+            });
+        case constants.DELETE_SONG_SUCCESS:
+            return Object.assign({}, state, {
+                isDeleting: false,
+                songs: [
+                    ...state.songs.slice(0, action.song.id),
+                    ...state.songs.slice(action.song.id + 1),
+                ],
+            });
+        case constants.DELETE_SONG_FAILURE:
+            return Object.assign({}, state, {
+                isDeleting: false,
             });
         default:
             return state;

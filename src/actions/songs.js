@@ -2,7 +2,6 @@ import util from 'util';
 import RNFS from 'react-native-fs';
 import { LogLevel, RNFFmpeg } from 'react-native-ffmpeg';
 import ytdl from 'react-native-ytdl';
-import TrackPlayer from 'react-native-track-player';
 import downloadDir from '_constants/downloadDir';
 import * as constants from '_constants/songs';
 
@@ -46,22 +45,22 @@ function getSongsFailure() {
     }
 }
 
-function playSongStart() {
+function deleteSongStart() {
     return {
-        type: constants.PLAY_SONG_START,
+        type: constants.DELETE_SONG_START,
     }
 }
 
-function playSongSuccess(song) {
+function deleteSongSuccess(song) {
     return {
-        type: constants.PLAY_SONG_SUCCESS,
+        type: constants.DELETE_SONG_SUCCESS,
         song
     }
 }
 
-function playSongFailure() {
+function deleteSongFailure() {
     return {
-        type: constants.PLAY_SONG_FAILURE,
+        type: constants.DELETE_SONG_FAILURE,
     }
 }
 
@@ -71,7 +70,7 @@ export function addSong(url) {
         try {
             const info = await getInfo(url);
             const format = ytdl.chooseFormat(info.formats, {quality: 'highest'});
-            const path = `${downloadDir}/${info.title}.mp3`;
+            const path = `${downloadDir}${info.title}.mp3`;
             await RNFFmpeg.executeWithArguments([
                 '-i',
                 format.url,
@@ -110,19 +109,14 @@ export function getSongs() {
     }
 }
 
-export function playSong(song) {
+export function deleteSong(song) {
     return async function(dispatch) {
-        dispatch(playSongStart());
+        dispatch(deleteSongStart());
         try {
-            await TrackPlayer.reset();
-            await TrackPlayer.add({
-                id: song.id,
-                url: song.path
-            });
-            await TrackPlayer.play();
-            dispatch(playSongSuccess(song));
+            await RNFS.unlink(song.path);
+            dispatch(deleteSongSuccess(song));
         } catch (err) {
-            dispatch(playSongFailure());
+            dispatch(deleteSongFailure());
         }
     }
 }
