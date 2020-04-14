@@ -10,6 +10,6 @@ cd youtube-music/android
 ```
 
 ## Screenshots
-![Add Song](/screenshots/add-song.png)
-![Songs](/screenshots/songs.png)
-![Player](/screenshots/player.png)
+<img alt="Add Song" src="/screenshots/add-song.png" width="33%"/>
+<img alt="Songs" src="/screenshots/songs.png" width="33%"/>
+<img alt="Player" src="/screenshots/player.png" width="33%"/>
