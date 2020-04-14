@@ -3,29 +3,21 @@ import { View, StyleSheet } from 'react-native';
 import { Divider, IconButton, Menu, Text, TouchableRipple } from 'react-native-paper';
 
 class Song extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { menuOpen: false };
+    state = { menuOpen: false }
 
-        this.onPress = this.onPress.bind(this);
-        this.onPressDelete = this.onPressDelete.bind(this);
-        this.closeMenu = this.closeMenu.bind(this);
-        this.openMenu = this.openMenu.bind(this);
-    }
-
-    onPress() {
+    onPress = () => {
         this.props.onPress(this.props.song);
     }
 
-    onPressDelete() {
+    onPressDelete = () => {
         this.props.onDelete(this.props.song);
     }
 
-    closeMenu() {
+    closeMenu = () => {
         this.setState({ menuOpen: false });
     }
 
-    openMenu() {
+    openMenu = () => {
         this.setState({ menuOpen: true });
     }
 

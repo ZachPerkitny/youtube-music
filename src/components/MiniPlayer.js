@@ -1,27 +1,41 @@
 import React, { Component } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { ProgressBar, Text, Surface } from 'react-native-paper';
+import { IconButton, ProgressBar, Text, Surface } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 
 class MiniPlayer extends Component {
+    onPressSong = () => {
+        const { onPressSong, song } = this.props;
+        if (onPressSong) onPressSong(song);
+    }
+
+    onPressPause = () => {
+        const { onPressPause, song } = this.props;
+        if (onPressPause) onPressPause(song);
+    }
+
+    onPressPlay = () => {
+        const { onPressPlay, song } = this.props;
+        if (onPressPlay) onPressPlay(song);
+    }
+
     render() {
         const {
-            onPause,
-            onPlay,
+            duration,
             isPlaying,
-            progress,
+            position,
             song,
             style,
         } = this.props;
         return (song) ? (
             <Surface style={Object.assign({}, styles.container, style)}>
-                <ProgressBar progress={progress}/>
+                <ProgressBar progress={position / duration}/>
                 <View style={styles.songAndControls}>
-                    <Text numberOfLines={1} style={{ flex: 1 }}>{song.name}</Text>
+                    <Text onPress={this.onPressSong} numberOfLines={1} style={{ flex: 1 }}>{song.name}</Text>
                     {(isPlaying) ? (
-                        <Icon name="pause" size={30} onPress={onPause}/>
+                        <IconButton icon="pause" size={30} onPress={this.onPressPause}/>
                     ) : (
-                        <Icon name="play-arrow" size={30} onPress={onPlay}/>
+                        <IconButton icon="play" size={30} onPress={this.onPressPlay}/>
                     )}
                 </View>
             </Surface>

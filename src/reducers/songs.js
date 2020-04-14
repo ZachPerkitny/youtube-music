@@ -4,7 +4,7 @@ export default function(state={
     isAdding: false,
     isDeleting: false,
     isLoading: false,
-    songs: [],
+    songs: {},
 }, action) {
     switch (action.type) {
         case constants.ADD_SONG_START:
@@ -14,7 +14,11 @@ export default function(state={
         case constants.ADD_SONG_SUCCESS:
             return Object.assign({}, state, {
                 isAdding: false,
-                songs: [...state.songs, action.song],
+                ids: [...state.ids, action.song.id],
+                songs: {
+                    ...state.songs,
+                    [action.song.id]: action.song,
+                },
             });
         case constants.ADD_SONG_FAILURE:
             return Object.assign({}, state, {
@@ -27,6 +31,7 @@ export default function(state={
         case constants.GET_SONGS_SUCCESS:
             return Object.assign({}, state, {
                 isLoading: false,
+                ids: action.ids,
                 songs: action.songs,
             });
         case constants.GET_SONGS_FAILURE:
@@ -37,14 +42,16 @@ export default function(state={
             return Object.assign({}, state, {
                 isDeleting: true,
             });
-        case constants.DELETE_SONG_SUCCESS:
+        case constants.DELETE_SONG_SUCCESS: {
+            const songs = Object.keys(state.songs).reduce((acc, id) => {
+                if (id != action.id) acc[id] = state.songs[id];
+                return acc;
+            }, {});
             return Object.assign({}, state, {
                 isDeleting: false,
-                songs: [
-                    ...state.songs.slice(0, action.song.id),
-                    ...state.songs.slice(action.song.id + 1),
-                ],
+                songs,
             });
+        }
         case constants.DELETE_SONG_FAILURE:
             return Object.assign({}, state, {
                 isDeleting: false,

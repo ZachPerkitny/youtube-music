@@ -1,25 +1,17 @@
 import React, { Component } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { ActivityIndicator, Button, TextInput } from 'react-native-paper';
 import { addSong } from '_actions/songs';
 
 class AddSong extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            url: '',
-        };
+    state = { url: '' }
 
-        this.handleChange = this.handleChange.bind(this);
-        this.handleDownload = this.handleDownload.bind(this);
-    }
-
-    handleChange(text) {
+    handleChange = (text) => {
         this.setState({ url: text });
     }
 
-    async handleDownload() {
+    handleDownload = async () => {
         if (this.state.url) {
             await this.props.addSong(this.state.url);
         }

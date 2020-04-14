@@ -2,49 +2,39 @@ import React, { Component } from 'react';
 import { View, ScrollView, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { Divider, FAB, Searchbar } from 'react-native-paper';
-import { pauseSong, playSong, resumeSong } from '_actions/player';
+import { pauseSong, resumeSong } from '_actions/player';
 import { deleteSong, getSongs } from '_actions/songs';
 import MiniPlayer from '_components/MiniPlayer';
-import Song from '_components/Song';
+import SongList from '_components/SongList';
 
 class Songs extends Component {
-    constructor(props) {
-        super(props);
-        this.state = { query: '' };
-
-        this.onChangeSearch = this.onChangeSearch.bind(this);
-        this.onPressAdd = this.onPressAdd.bind(this);
-        this.onDeleteSong = this.onDeleteSong.bind(this);
-        this.onPressSong = this.onPressSong.bind(this);
-        this.onPressPause = this.onPressPause.bind(this);
-        this.onPressPlay = this.onPressPlay.bind(this);
-    }
+    state = { query: '' }
 
     async componentDidMount() {
         await this.props.getSongs();
     }
 
-    onChangeSearch(query) {
+    onChangeSearch = (query) => {
         this.setState({ query });
     }
 
-    onPressAdd() {
+    onPressAdd = () => {
         this.props.navigation.navigate('AddSong');
     }
 
-    async onDeleteSong(song) {
+    onDeleteSong = async (song) => {
         await this.props.deleteSong(song);
     }
 
-    async onPressSong(song) {
-        await this.props.playSong(song);
+    onPressSong = (song) => {
+        this.props.navigation.navigate('Player', { song });
     }
 
-    async onPressPause() {
+    onPressPause = async () => {
         await this.props.pauseSong();
     }
 
-    async onPressPlay() {
+    onPressPlay = async () => {
         await this.props.resumeSong();
     }
 
@@ -57,16 +47,6 @@ class Songs extends Component {
             songs,
         } = this.props;
         const { query } = this.state;
-        const songElems = songs
-            .filter(song => song.name.toLowerCase().indexOf(query.toLowerCase()) !== -1)
-            .map((song, i) => {
-                return <Song
-                    onDelete={this.onDeleteSong}
-                    onPress={this.onPressSong}
-                    key={i}
-                    song={song}
-                />
-            });
         return (
             <View style={styles.container}>
                 <Searchbar
@@ -74,9 +54,13 @@ class Songs extends Component {
                     onChangeText={this.onChangeSearch}
                     value={query}
                 />
-                <ScrollView contentContainerStyle={{ flexGrow: 1, paddingBottom: 64 }}>
-                    { songElems }
-                </ScrollView>
+                <SongList
+                    filter={query}
+                    onDeleteSong={this.onDeleteSong}
+                    onPressSong={this.onPressSong}
+                    songs={songs}
+                    style={{ flexGrow: 1, paddingBottom: 64 }}
+                />
                 <FAB
                     onPress={this.onPressAdd}
                     icon="plus"
@@ -84,9 +68,11 @@ class Songs extends Component {
                 />
                 <MiniPlayer
                     isPlaying={isPlaying}
-                    progress={position / duration}
-                    onPlay={this.onPressPlay}
-                    onPause={this.onPressPause}
+                    duration={duration}
+                    position={position}
+                    onPressSong={this.onPressSong}
+                    onPressPlay={this.onPressPlay}
+                    onPressPause={this.onPressPause}
                     song={nowPlaying}
                 />
             </View>
@@ -143,7 +129,6 @@ const mapDispatchToProps = (dispatch) => {
         deleteSong: song => dispatch(deleteSong(song)),
         getSongs: () => dispatch(getSongs()),
         pauseSong: () => dispatch(pauseSong()),
-        playSong: song => dispatch(playSong(song)),
         resumeSong: () => dispatch(resumeSong()),
     }
 }

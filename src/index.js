@@ -6,7 +6,9 @@ import { createStackNavigator, TransitionPresets } from '@react-navigation/stack
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import TrackPlayer from 'react-native-track-player';
 import { Provider } from 'react-redux';
+import Toasts from '_components/Toasts';
 import AddSong from '_screens/AddSong';
+import Player from '_screens/Player';
 import Songs from '_screens/Songs';
 import store from './store';
 
@@ -27,14 +29,16 @@ TrackPlayer.updateOptions({
     capabilities: [
         TrackPlayer.CAPABILITY_PLAY,
         TrackPlayer.CAPABILITY_PAUSE,
-        // TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-        // TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+        TrackPlayer.CAPABILITY_SEEK_TO,
     ],
     compactCapabilities: [
         TrackPlayer.CAPABILITY_PLAY,
         TrackPlayer.CAPABILITY_PAUSE,
-        // TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-        // TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
+        TrackPlayer.CAPABILITY_SEEK_TO,
     ],
 });
 
@@ -62,7 +66,15 @@ const App = () => (
                             ...TransitionPresets.SlideFromRightIOS,
                         }}
                     />
+                    <Stack.Screen
+                        name="Player"
+                        component={Player}
+                        options={{
+                            ...TransitionPresets.SlideFromRightIOS,
+                        }}
+                    />
                 </Stack.Navigator>
+                <Toasts/>
             </NavigationContainer>
         </PaperProvider>
     </Provider>

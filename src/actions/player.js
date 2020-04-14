@@ -24,7 +24,7 @@ function startProgressTimer(dispatch) {
     timer = setInterval(async function() {
         const progress = await getProgress();
         dispatch(setProgress(progress));
-    }, 1000);
+    }, 500);
 }
 
 export function playSong(song) {
@@ -33,8 +33,11 @@ export function playSong(song) {
         await TrackPlayer.add({
             id: song.id,
             url: song.path,
+            title: song.name,
         });
         await TrackPlayer.play();
+        const progress = await getProgress();
+        dispatch(setProgress(progress));
         startProgressTimer(dispatch);
         dispatch({
             type: constants.PLAY_SONG,
@@ -60,5 +63,43 @@ export function resumeSong() {
         dispatch({
             type: constants.RESUME_SONG,
         });
+    }
+}
+
+export function playPrev() {
+    return async function(dispatch, getState) {
+        const state = getState();
+        const {
+            ids,
+            songs,
+        } = state.songs;
+        const { nowPlaying } = state.player;
+        const index = ids.indexOf(nowPlaying.id);
+        let song;
+        if (index - 1 < 0) {
+            song = songs[ids[ids.length - 1]];
+        } else {
+            song = songs[ids[index - 1]];
+        }
+        dispatch(playSong(song));
+    }
+}
+
+export function playNext() {
+    return async function(dispatch, getState) {
+        const state = getState();
+        const {
+            ids,
+            songs,
+        } = state.songs;
+        const { nowPlaying } = state.player;
+        const index = ids.indexOf(nowPlaying.id);
+        let song;
+        if (index + 1 >= ids.length) {
+            song = songs[ids[0]];
+        } else {
+            song = songs[ids[index + 1]];
+        }
+        dispatch(playSong(song));
     }
 }

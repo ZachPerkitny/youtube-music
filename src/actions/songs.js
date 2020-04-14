@@ -1,7 +1,9 @@
+import slugify from 'slugify';
 import util from 'util';
 import RNFS from 'react-native-fs';
 import { LogLevel, RNFFmpeg } from 'react-native-ffmpeg';
 import ytdl from 'react-native-ytdl';
+import { addToast } from '_actions/toasts';
 import downloadDir from '_constants/downloadDir';
 import * as constants from '_constants/songs';
 
@@ -16,7 +18,7 @@ function addSongStart() {
 function addSongSuccess(song) {
     return {
         type: constants.ADD_SONG_SUCCESS,
-        song
+        song,
     }
 }
 
@@ -32,10 +34,11 @@ function getSongsStart() {
     }
 }
 
-function getSongsSuccess(songs) {
+function getSongsSuccess(songs, ids) {
     return {
         type: constants.GET_SONGS_SUCCESS,
-        songs
+        ids,
+        songs,
     }
 }
 
@@ -51,10 +54,10 @@ function deleteSongStart() {
     }
 }
 
-function deleteSongSuccess(song) {
+function deleteSongSuccess(id) {
     return {
         type: constants.DELETE_SONG_SUCCESS,
-        song
+        id,
     }
 }
 
@@ -77,12 +80,14 @@ export function addSong(url) {
                 '-vn',
                 path]);
             dispatch(addSongSuccess({
-                id: getState().songs.songs.length,
+                id: slugify(info.title),
                 name: info.title,
                 path
             }));
+            dispatch(addToast(`Successfully downloaded ${info.title}`));
         } catch (err) {
             dispatch(addSongFailure());
+            dispatch(addToast(`Error downloading ${info.title}`));
         }
     }
 }
@@ -93,18 +98,23 @@ export function getSongs() {
         try {
             await RNFS.mkdir(downloadDir);
             const files = await RNFS.readDir(downloadDir);
-            const songs = [];
+            const songs = {};
+            const ids = [];
             let i = 0;
             for (const file of files) {
-                songs.push({
-                    id: i++, 
-                    name: file.path.split('/').pop().split('.').shift(),
+                const name = file.path.split('/').pop().split('.').shift();
+                const id = slugify(name);
+                songs[id] = {
+                    id,
+                    name,
                     path: file.path,
-                });
+                }
+                ids.push(id);
             }
-            dispatch(getSongsSuccess(songs));
+            dispatch(getSongsSuccess(songs, ids));
         } catch (err) {
             dispatch(getSongsFailure());
+            dispatch(addToast('Error fetching songs'));
         }
     }
 }
@@ -114,9 +124,11 @@ export function deleteSong(song) {
         dispatch(deleteSongStart());
         try {
             await RNFS.unlink(song.path);
-            dispatch(deleteSongSuccess(song));
+            dispatch(deleteSongSuccess(song.id));
+            dispatch(addToast(`Successfully deleted ${song.name}`));
         } catch (err) {
             dispatch(deleteSongFailure());
+            dispatch(addToast(`Error deleting ${song.name}`));
         }
     }
 }
