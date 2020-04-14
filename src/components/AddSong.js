@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
-import { connect } from 'react-redux';
 import { ActivityIndicator, Button, TextInput } from 'react-native-paper';
-import { addSong } from '_actions/songs';
 
 class AddSong extends Component {
+    static propTypes = {
+        isAdding: PropTypes.bool.isRequired,
+
+        addSong: PropTypes.func.isRequired,
+    }
+
     state = { url: '' }
 
     handleChange = (text) => {
@@ -52,22 +57,4 @@ const styles = StyleSheet.create({
     },
 });
 
-const mapStateToProps = (state) => {
-    const { 
-        songs: {
-            isAdding,
-        },
-    } = state;
-
-    return {
-        isAdding,
-    }
-};
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        addSong: (url) => dispatch(addSong(url)),
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(AddSong);
+export default AddSong;

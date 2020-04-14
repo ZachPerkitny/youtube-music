@@ -1,19 +1,25 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { View } from 'react-native';
-import { connect } from 'react-redux';
-import { removeToast } from '_actions/toasts';
 import Toast from '_components/Toast';
 
 class Toasts extends Component {
+    static propTypes = {
+        toasts: PropTypes.array.isRequired,
+
+        removeToast: PropTypes.func.isRequired,
+    }
+
     onDismiss = (id) => {
         this.props.removeToast(id);
     }
 
     render() {
-        const toasts = this.props.toasts.map(toast => {
+        const toasts = this.props.toasts.map((toast, i) => {
             return (
                 <Toast
                     onDismiss={() => this.onDismiss(toast.id)}
+                    key={i}
                 >
                     {toast.message}
                 </Toast>
@@ -28,14 +34,4 @@ class Toasts extends Component {
     }
 }
 
-const mapStateToProps = (state) => {
-    return { toasts: state.toasts, }
-}
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        removeToast: id => dispatch(removeToast(id)),
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Toasts);
+export default Toasts;

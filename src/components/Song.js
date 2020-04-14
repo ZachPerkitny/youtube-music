@@ -1,8 +1,16 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
 import { Divider, IconButton, Menu, Text, TouchableRipple } from 'react-native-paper';
 
 class Song extends Component {
+    static propTypes = {
+        song: PropTypes.object.isRequired,
+
+        onPress: PropTypes.func.isRequired,
+        onDelete: PropTypes.func.isRequired,
+    }
+
     state = { menuOpen: false }
 
     onPress = () => {

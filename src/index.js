@@ -6,10 +6,10 @@ import { createStackNavigator, TransitionPresets } from '@react-navigation/stack
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import TrackPlayer from 'react-native-track-player';
 import { Provider } from 'react-redux';
-import Toasts from '_components/Toasts';
-import AddSong from '_screens/AddSong';
-import Player from '_screens/Player';
-import Songs from '_screens/Songs';
+import AddSongContainer from '_containers/AddSongContainer';
+import PlayerContainer from '_containers/PlayerContainer';
+import SongsContainer from '_containers/SongsContainer';
+import ToastsContainer from '_containers/ToastsContainer';
 import store from './store';
 
 const theme = {
@@ -53,14 +53,14 @@ const App = () => (
                 >
                     <Stack.Screen
                         name="Songs"
-                        component={Songs}
+                        component={SongsContainer}
                         options={{
                             ...TransitionPresets.SlideFromRightIOS,
                         }}
                     />
                     <Stack.Screen
                         name="AddSong"
-                        component={AddSong}
+                        component={AddSongContainer}
                         options={{
                             title: "Add Song",
                             ...TransitionPresets.SlideFromRightIOS,
@@ -68,13 +68,13 @@ const App = () => (
                     />
                     <Stack.Screen
                         name="Player"
-                        component={Player}
+                        component={PlayerContainer}
                         options={{
                             ...TransitionPresets.SlideFromRightIOS,
                         }}
                     />
                 </Stack.Navigator>
-                <Toasts/>
+                <ToastsContainer/>
             </NavigationContainer>
         </PaperProvider>
     </Provider>

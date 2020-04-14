@@ -1,20 +1,22 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { ScrollView } from 'react-native';
 import Song from '_components/Song';
 
 class SongList extends Component {
+    static propTypes = {
+        songs: PropTypes.object.isRequired,
+
+        onDeleteSong: PropTypes.func.isRequired,
+        onPressSong: PropTypes.func.isRequired,
+    }
+
     onDeleteSong = (song) => {
-        const { onDeleteSong } = this.props;
-        if (onDeleteSong) {
-            onDeleteSong(song);
-        }
+        this.props.onDeleteSong(song);
     }
 
     onPressSong = (song) => {
-        const { onPressSong } = this.props;
-        if (onPressSong) {
-            onPressSong(song);
-        }
+        this.props.onPressSong(song);
     }
 
     render() {

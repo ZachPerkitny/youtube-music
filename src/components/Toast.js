@@ -1,7 +1,15 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Snackbar } from 'react-native-paper';
 
 class Toast extends Component {
+    static propTypes = {
+        children: PropTypes.node.isRequired,
+        duration: PropTypes.number,
+
+        onDismiss: PropTypes.func,
+    }
+
     state = { visible: true }
 
     onDismiss = () => {

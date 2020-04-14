@@ -19,7 +19,7 @@ module.exports = async function() {
         store.dispatch(playNext());
     });
 
-    TrackPlayer.addEventListener('playback-queue-ended', ({ track }) => {
+    TrackPlayer.addEventListener('playback-queue-ended', async ({ track }) => {
         if (track) store.dispatch(playNext());
     });
 };

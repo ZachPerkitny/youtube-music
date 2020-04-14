@@ -6,6 +6,8 @@ export default function(state={
     duration: 0,
     isPlaying: false,
     nowPlaying: null,
+    shuffle: false,
+    repeat: false,
 }, action) {
     switch (action.type) {
         case constants.PLAY_SONG:
@@ -26,6 +28,14 @@ export default function(state={
                 bufferedPosition: action.bufferedPosition,
                 position: action.position,
                 duration: action.duration,
+            });
+        case constants.TOGGLE_SHUFFLE:
+            return Object.assign({}, state, {
+                shuffle: !state.shuffle,
+            });
+        case constants.TOGGLE_REPEAT:
+            return Object.assign({}, state, {
+                repeat: !state.repeat,
             });
         default:
             return state;

@@ -11,8 +11,8 @@ module.exports = {
                 _assets: './src/assets',
                 _components: './src/components',
                 _constants: './src/constants',
+                _containers: './src/containers',
                 _reducers: './src/reducers',
-                _screens: './src/screens',
                 _utils: './src/utils',
             }
         }

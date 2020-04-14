@@ -29,12 +29,19 @@ function startProgressTimer(dispatch) {
 
 export function playSong(song) {
     return async function(dispatch, getState) {
-        await TrackPlayer.reset();
+        const {
+            nowPlaying
+        } = getState().player;
+        await TrackPlayer.stop();
         await TrackPlayer.add({
             id: song.id,
             url: song.path,
             title: song.name,
         });
+        if (nowPlaying) {
+            await TrackPlayer.skip(song.id);
+            await TrackPlayer.remove(nowPlaying.id);
+        }
         await TrackPlayer.play();
         const progress = await getProgress();
         dispatch(setProgress(progress));
@@ -92,14 +99,41 @@ export function playNext() {
             ids,
             songs,
         } = state.songs;
-        const { nowPlaying } = state.player;
-        const index = ids.indexOf(nowPlaying.id);
+        const {
+            nowPlaying,
+            shuffle,
+            repeat,
+        } = state.player;
         let song;
-        if (index + 1 >= ids.length) {
-            song = songs[ids[0]];
+        if (shuffle) {
+            const nowPlayingIndex = ids.indexOf(nowPlaying.id);
+            let index;
+            do {
+                index = Math.floor(Math.random() * ids.length);
+            } while (index === nowPlayingIndex);
+            song = songs[ids[index]];
+        } else if (repeat) {
+            song = nowPlaying;
         } else {
-            song = songs[ids[index + 1]];
+            const index = ids.indexOf(nowPlaying.id);
+            if (index + 1 >= ids.length) {
+                song = songs[ids[0]];
+            } else {
+                song = songs[ids[index + 1]];
+            }
         }
         dispatch(playSong(song));
+    }
+}
+
+export function toggleShuffle() {
+    return {
+        type: constants.TOGGLE_SHUFFLE,
+    }
+}
+
+export function toggleRepeat() {
+    return {
+        type: constants.TOGGLE_REPEAT,
     }
 }

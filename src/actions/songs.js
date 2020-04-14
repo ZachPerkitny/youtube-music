@@ -104,11 +104,8 @@ export function getSongs() {
             for (const file of files) {
                 const name = file.path.split('/').pop().split('.').shift();
                 const id = slugify(name);
-                songs[id] = {
-                    id,
-                    name,
-                    path: file.path,
-                }
+                const song = { id, name, path: file.path }
+                songs[id] = song;
                 ids.push(id);
             }
             dispatch(getSongsSuccess(songs, ids));

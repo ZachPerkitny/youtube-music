@@ -1,27 +1,61 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
-import { Colors, Headline, IconButton, ProgressBar, Text } from 'react-native-paper';
+import { Colors, Headline, IconButton, ProgressBar, Text, withTheme } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 
-class LargePlayer extends Component {
-    onPressPause = () => {
-        const { onPressPause } = this.props;
-        if (onPressPause) onPressPause();
+class Player extends Component {
+    static propTypes = {
+        duration: PropTypes.number.isRequired,
+        isPlaying: PropTypes.bool.isRequired,
+        nowPlaying: PropTypes.object,
+        position: PropTypes.number.isRequired,
+        shuffle: PropTypes.bool.isRequired,
+        repeat: PropTypes.bool.isRequired,
+
+        playSong: PropTypes.func.isRequired,
+        pauseSong: PropTypes.func.isRequired,
+        resumeSong: PropTypes.func.isRequired,
+        playPrev: PropTypes.func.isRequired,
+        playNext: PropTypes.func.isRequired,
+        toggleShuffle: PropTypes.func.isRequired,
+        toggleRepeat: PropTypes.func.isRequired,
     }
 
-    onPressPlay = () => {
-        const { onPressPlay } = this.props;
-        if (onPressPlay) onPressPlay();
+    async componentDidMount() {
+        const {
+            nowPlaying,
+            playSong,
+            route,
+        } = this.props;
+        const { song } = route.params;
+        if (!nowPlaying || nowPlaying.id !== song.id) {
+            await playSong(song);
+        }
     }
 
-    onPressPlayPrev = () => {
-        const { onPressPlayPrev } = this.props;
-        if (onPressPlayPrev) onPressPlayPrev();
+    onPressPause = async () => {
+        await this.props.pauseSong();
     }
 
-    onPressPlayNext = () => {
-        const { onPressPlayNext } = this.props;
-        if (onPressPlayNext) onPressPlayNext();
+    onPressPlay = async () => {
+        await this.props.resumeSong();
+    }
+
+    onPressPlayPrev = async () => {
+        await this.props.playPrev();
+    }
+
+    onPressPlayNext = async () => {
+        await this.props.playNext();
+    }
+
+    onPressShuffle = () => {
+        this.props.toggleShuffle();
+    }
+
+    onPressRepeat = () => {
+        this.props.toggleRepeat();
     }
 
     formatTime = (t) => {
@@ -36,13 +70,15 @@ class LargePlayer extends Component {
             duration,
             isPlaying,
             position,
-            song,
-            style,
+            nowPlaying,
+            theme,
+            repeat,
+            shuffle,
         } = this.props;
-        return (song) ? (
-            <View style={Object.assign({}, styles.container, style)}>
+        return (nowPlaying) ? (
+            <View style={styles.container}>
                 <Headline numberOfLines={1}>
-                    {song.name}
+                    {nowPlaying.name}
                 </Headline>
                 <View style={styles.progress}>
                     <ProgressBar progress={position / duration}/>
@@ -52,6 +88,12 @@ class LargePlayer extends Component {
                     </View>
                 </View>
                 <View style={styles.controls}>
+                    <IconButton
+                        icon="shuffle"
+                        size={30}
+                        onPress={this.onPressShuffle}
+                        color={(shuffle) ? theme.colors.primary : Colors.grey400}
+                    />
                     <IconButton
                         icon="skip-previous"
                         size={30}
@@ -78,6 +120,12 @@ class LargePlayer extends Component {
                         icon="skip-next"
                         size={30}
                         onPress={this.onPressPlayNext}
+                    />
+                    <IconButton
+                        icon="repeat"
+                        size={30}
+                        onPress={this.onPressRepeat}
+                        color={(repeat) ? theme.colors.primary : Colors.grey400}
                     />
                 </View>
             </View>
@@ -110,4 +158,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default LargePlayer;
+export default withTheme(Player);

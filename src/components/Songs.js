@@ -1,13 +1,22 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { View, ScrollView, StyleSheet } from 'react-native';
-import { connect } from 'react-redux';
 import { Divider, FAB, Searchbar } from 'react-native-paper';
-import { pauseSong, resumeSong } from '_actions/player';
-import { deleteSong, getSongs } from '_actions/songs';
 import MiniPlayer from '_components/MiniPlayer';
 import SongList from '_components/SongList';
 
 class Songs extends Component {
+    static propTypes = {
+        duration: PropTypes.number.isRequired,
+        isPlaying: PropTypes.bool.isRequired,
+        nowPlaying: PropTypes.object,
+        position: PropTypes.number.isRequired,
+        songs: PropTypes.object.isRequired,
+
+        pauseSong: PropTypes.func.isRequired,
+        resumeSong: PropTypes.func.isRequired,
+    }
+
     state = { query: '' }
 
     async componentDidMount() {
@@ -100,37 +109,4 @@ const styles = StyleSheet.create({
     }
 });
 
-const mapStateToProps = (state) => {
-    const {
-        player: {
-            duration,
-            isPlaying,
-            nowPlaying,
-            position,
-        },
-        songs: {
-            isLoading,
-            songs,
-        },
-    } = state;
-
-    return {
-        duration,
-        isPlaying,
-        nowPlaying,
-        position,
-        isLoading,
-        songs,
-    }
-};
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        deleteSong: song => dispatch(deleteSong(song)),
-        getSongs: () => dispatch(getSongs()),
-        pauseSong: () => dispatch(pauseSong()),
-        resumeSong: () => dispatch(resumeSong()),
-    }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Songs);
+export default Songs;
