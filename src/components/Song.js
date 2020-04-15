@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import { Image, View, StyleSheet } from 'react-native';
 import { Divider, IconButton, Menu, Text, TouchableRipple } from 'react-native-paper';
 
 class Song extends Component {
@@ -30,10 +30,13 @@ class Song extends Component {
     }
 
     render() {
+        const {
+            song,
+        } = this.props;
         return (
             <TouchableRipple style={styles.container} onPress={this.onPress}>
                 <View style={styles.flex}>
-                    <Text numberOfLines={1} style={{ flex: 1 }}>{this.props.song.name}</Text>
+                    <Text numberOfLines={1} style={{ flex: 1 }}>{song.name}</Text>
                     <Menu
                         visible={this.state.menuOpen}
                         onDismiss={this.closeMenu}

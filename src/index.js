@@ -1,16 +1,17 @@
 import 'react-native-gesture-handler';
 import React from 'react';
-import { StatusBar } from 'react-native';
+import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
-import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-import TrackPlayer from 'react-native-track-player';
+import { ActivityIndicator, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import TrackPlayer, { Capability } from 'react-native-track-player';
+import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import AddSongContainer from '_containers/AddSongContainer';
 import PlayerContainer from '_containers/PlayerContainer';
 import SongsContainer from '_containers/SongsContainer';
 import ToastsContainer from '_containers/ToastsContainer';
-import store from './store';
+import { store, persistor } from './store';
 
 const theme = {
     ...DefaultTheme,
@@ -27,55 +28,62 @@ TrackPlayer.setupPlayer();
 TrackPlayer.updateOptions({
     stopWithApp: true,
     capabilities: [
-        TrackPlayer.CAPABILITY_PLAY,
-        TrackPlayer.CAPABILITY_PAUSE,
-        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
-        TrackPlayer.CAPABILITY_SEEK_TO,
+        Capability.Play,
+        Capability.Pause,
+        Capability.SkipToNext,
+        Capability.SkipToPrevious,
     ],
     compactCapabilities: [
-        TrackPlayer.CAPABILITY_PLAY,
-        TrackPlayer.CAPABILITY_PAUSE,
-        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
-        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
-        TrackPlayer.CAPABILITY_SEEK_TO,
+        Capability.Play,
+        Capability.Pause,
+        Capability.SkipToNext,
+        Capability.SkipToPrevious,
     ],
 });
 
 const App = () => (
     <Provider store={store}>
         <PaperProvider theme={theme}>
-            <NavigationContainer>
-                <Stack.Navigator
-                    screenOptions={{
-                        headerShown: false
-                    }}
-                >
-                    <Stack.Screen
-                        name="Songs"
-                        component={SongsContainer}
-                        options={{
-                            ...TransitionPresets.SlideFromRightIOS,
+            <PersistGate
+                loading={(
+                    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+                        <ActivityIndicator size="large"/>
+                    </View>
+                )}
+                persistor={persistor}
+            >
+                <NavigationContainer>
+                    <Stack.Navigator
+                        screenOptions={{
+                            headerShown: false
                         }}
-                    />
-                    <Stack.Screen
-                        name="AddSong"
-                        component={AddSongContainer}
-                        options={{
-                            title: "Add Song",
-                            ...TransitionPresets.SlideFromRightIOS,
-                        }}
-                    />
-                    <Stack.Screen
-                        name="Player"
-                        component={PlayerContainer}
-                        options={{
-                            ...TransitionPresets.SlideFromRightIOS,
-                        }}
-                    />
-                </Stack.Navigator>
-                <ToastsContainer/>
-            </NavigationContainer>
+                    >
+                        <Stack.Screen
+                            name="Songs"
+                            component={SongsContainer}
+                            options={{
+                                ...TransitionPresets.SlideFromRightIOS,
+                            }}
+                        />
+                        <Stack.Screen
+                            name="AddSong"
+                            component={AddSongContainer}
+                            options={{
+                                title: "Add Song",
+                                ...TransitionPresets.SlideFromRightIOS,
+                            }}
+                        />
+                        <Stack.Screen
+                            name="Player"
+                            component={PlayerContainer}
+                            options={{
+                                ...TransitionPresets.SlideFromRightIOS,
+                            }}
+                        />
+                    </Stack.Navigator>
+                    <ToastsContainer/>
+                </NavigationContainer>
+            </PersistGate>
         </PaperProvider>
     </Provider>
 );

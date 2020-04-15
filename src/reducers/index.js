@@ -1,4 +1,4 @@
-import { combineReducers } from "redux";
+import { combineReducers } from 'redux';
 import player from './player';
 import songs from './songs';
 import toasts from './toasts';

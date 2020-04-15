@@ -4,7 +4,7 @@ import RNFS from 'react-native-fs';
 import { LogLevel, RNFFmpeg } from 'react-native-ffmpeg';
 import ytdl from 'react-native-ytdl';
 import { addToast } from '_actions/toasts';
-import downloadDir from '_constants/downloadDir';
+import * as downloadDirs from '_constants/downloadDirs';
 import * as constants from '_constants/songs';
 
 const getInfo = util.promisify(ytdl.getInfo);
@@ -25,26 +25,6 @@ function addSongSuccess(song) {
 function addSongFailure() {
     return {
         type: constants.ADD_SONG_FAILURE,
-    }
-}
-
-function getSongsStart() {
-    return {
-        type: constants.GET_SONGS_START,
-    }
-}
-
-function getSongsSuccess(songs, ids) {
-    return {
-        type: constants.GET_SONGS_SUCCESS,
-        ids,
-        songs,
-    }
-}
-
-function getSongsFailure() {
-    return {
-        type: constants.GET_SONGS_FAILURE,
     }
 }
 
@@ -71,47 +51,38 @@ export function addSong(url) {
     return async function(dispatch, getState) {
         dispatch(addSongStart());
         try {
-            const info = await getInfo(url);
+            const id = ytdl.getVideoID(url);
+            const info = await getInfo(id);
             const format = ytdl.chooseFormat(info.formats, {quality: 'highest'});
-            const path = `${downloadDir}${info.title}.mp3`;
-            await RNFFmpeg.executeWithArguments([
-                '-i',
-                format.url,
-                '-vn',
-                path]);
+            const path = `${downloadDirs.songs}/${info.title}.mp3`;
+            const thumbnailPath = `${downloadDirs.thumbnails}/${info.title}.jpg`;
+            await Promise.all([
+                RNFS.mkdir(downloadDirs.songs),
+                RNFS.mkdir(downloadDirs.thumbnails),
+            ]);
+            await Promise.all([
+                RNFFmpeg.executeWithArguments([
+                    '-i',
+                    format.url,
+                    '-vn',
+                    path
+                ]),
+                RNFS.downloadFile({
+                    fromUrl: `https://img.youtube.com/vi/${id}/hqdefault.jpg`,
+                    toFile: thumbnailPath,
+                }).promise,
+            ]);
             dispatch(addSongSuccess({
                 id: slugify(info.title),
                 name: info.title,
-                path
+                path,
+                thumbnailPath,
             }));
             dispatch(addToast(`Successfully downloaded ${info.title}`));
         } catch (err) {
+            console.log(err);
             dispatch(addSongFailure());
-            dispatch(addToast(`Error downloading ${info.title}`));
-        }
-    }
-}
-
-export function getSongs() {
-    return async function(dispatch) {
-        dispatch(getSongsStart());
-        try {
-            await RNFS.mkdir(downloadDir);
-            const files = await RNFS.readDir(downloadDir);
-            const songs = {};
-            const ids = [];
-            let i = 0;
-            for (const file of files) {
-                const name = file.path.split('/').pop().split('.').shift();
-                const id = slugify(name);
-                const song = { id, name, path: file.path }
-                songs[id] = song;
-                ids.push(id);
-            }
-            dispatch(getSongsSuccess(songs, ids));
-        } catch (err) {
-            dispatch(getSongsFailure());
-            dispatch(addToast('Error fetching songs'));
+            dispatch(addToast(`Error downloading from ${url}`));
         }
     }
 }
@@ -120,7 +91,10 @@ export function deleteSong(song) {
     return async function(dispatch) {
         dispatch(deleteSongStart());
         try {
-            await RNFS.unlink(song.path);
+            await Promise.all([
+                RNFS.unlink(song.path),
+                RNFS.unlink(song.thumbnailPath),
+            ]);
             dispatch(deleteSongSuccess(song.id));
             dispatch(addToast(`Successfully deleted ${song.name}`));
         } catch (err) {

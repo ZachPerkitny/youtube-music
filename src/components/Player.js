@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import { Image, View, StyleSheet } from 'react-native';
 import { Colors, Headline, IconButton, ProgressBar, Text, withTheme } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 
 class Player extends Component {
     static propTypes = {
@@ -77,7 +76,11 @@ class Player extends Component {
         } = this.props;
         return (nowPlaying) ? (
             <View style={styles.container}>
-                <Headline numberOfLines={1}>
+                <Image
+                    style={styles.thumbnail}
+                    source={{ uri: `file://${nowPlaying.thumbnailPath}` }}
+                />
+                <Headline numberOfLines={1} style={styles.headline}>
                     {nowPlaying.name}
                 </Headline>
                 <View style={styles.progress}>
@@ -139,14 +142,23 @@ const styles = StyleSheet.create({
         flex: 1,
         marginHorizontal: 15,
     },
+    thumbnail: {
+        alignSelf: 'center',
+        height: 150,
+        width: 150,
+        borderWidth: 1,
+        borderRadius: 75,
+        marginBottom: 15,
+    },
     controls: {
         alignItems: 'center',
         justifyContent: 'center',
         flexDirection: 'row',
     },
-    progress: {
-        marginTop: 15,
+    headline: {
+        marginBottom: 15,
     },
+    progress: {},
     progressTime: {
         marginTop: 7.5,
         flexDirection: 'row',

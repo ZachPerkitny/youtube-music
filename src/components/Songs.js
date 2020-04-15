@@ -19,10 +19,6 @@ class Songs extends Component {
 
     state = { query: '' }
 
-    async componentDidMount() {
-        await this.props.getSongs();
-    }
-
     onChangeSearch = (query) => {
         this.setState({ query });
     }

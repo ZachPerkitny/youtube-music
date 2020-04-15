@@ -3,7 +3,7 @@ import * as constants from '_constants/songs';
 export default function(state={
     isAdding: false,
     isDeleting: false,
-    isLoading: false,
+    ids: [],
     songs: {},
 }, action) {
     switch (action.type) {
@@ -23,20 +23,6 @@ export default function(state={
         case constants.ADD_SONG_FAILURE:
             return Object.assign({}, state, {
                 isAdding: false,
-            });
-        case constants.GET_SONGS_START:
-            return Object.assign({}, state, {
-                isLoading: true
-            });
-        case constants.GET_SONGS_SUCCESS:
-            return Object.assign({}, state, {
-                isLoading: false,
-                ids: action.ids,
-                songs: action.songs,
-            });
-        case constants.GET_SONGS_FAILURE:
-            return Object.assign({}, state, {
-                isLoading: false,
             });
         case constants.DELETE_SONG_START:
             return Object.assign({}, state, {

@@ -34,6 +34,7 @@ export function playSong(song) {
         } = getState().player;
         await TrackPlayer.stop();
         await TrackPlayer.add({
+            artwork: `file://${song.thumbnailPath}`,
             id: song.id,
             url: song.path,
             title: song.name,

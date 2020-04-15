@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { TouchableWithoutFeedback, View, ViewPropTypes, StyleSheet } from 'react-native';
+import { Image, TouchableWithoutFeedback, View, ViewPropTypes, StyleSheet } from 'react-native';
 import { IconButton, ProgressBar, Text, Surface } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/dist/MaterialIcons';
 
@@ -46,6 +46,10 @@ class MiniPlayer extends Component {
                 <ProgressBar progress={position / duration}/>
                 <TouchableWithoutFeedback onPress={this.onPressSong}>
                     <View style={styles.songAndControls}>
+                        <Image
+                            source={{ uri: `file://${song.thumbnailPath}` }}
+                            style={styles.thumbnail}
+                        />
                         <Text numberOfLines={1} style={{ flex: 1 }}>{song.name}</Text>
                         {(isPlaying) ? (
                             <IconButton icon="pause" size={30} onPress={this.onPressPause}/>
@@ -63,6 +67,13 @@ const styles = StyleSheet.create({
     container: {
         height: 64,
         elevation: 4,
+    },
+    thumbnail: {
+        height: 48,
+        width: 48,
+        borderWidth: 1,
+        borderRadius: 24,
+        marginRight: 15,
     },
     songAndControls: {
         flexDirection: 'row',
