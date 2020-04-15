@@ -29,7 +29,7 @@
     "react-native-reanimated": "^1.7.1",
     "react-native-safe-area-context": "^0.7.3",
     "react-native-screens": "^2.4.0",
-    "react-native-track-player": "^2.0.0-rc13",
+    "react-native-track-player": "^1.2.2",
     "react-native-vector-icons": "^6.6.0",
     "react-native-ytdl": "^1.0.7",
     "react-redux": "^7.2.0",

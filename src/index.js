@@ -4,7 +4,7 @@ import { View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator, TransitionPresets } from '@react-navigation/stack';
 import { ActivityIndicator, DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
-import TrackPlayer, { Capability } from 'react-native-track-player';
+import TrackPlayer from 'react-native-track-player';
 import { PersistGate } from 'redux-persist/integration/react';
 import { Provider } from 'react-redux';
 import AddSongContainer from '_containers/AddSongContainer';
@@ -28,16 +28,16 @@ TrackPlayer.setupPlayer();
 TrackPlayer.updateOptions({
     stopWithApp: true,
     capabilities: [
-        Capability.Play,
-        Capability.Pause,
-        Capability.SkipToNext,
-        Capability.SkipToPrevious,
+        TrackPlayer.CAPABILITY_PLAY,
+        TrackPlayer.CAPABILITY_PAUSE,
+        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
     ],
     compactCapabilities: [
-        Capability.Play,
-        Capability.Pause,
-        Capability.SkipToNext,
-        Capability.SkipToPrevious,
+        TrackPlayer.CAPABILITY_PLAY,
+        TrackPlayer.CAPABILITY_PAUSE,
+        TrackPlayer.CAPABILITY_SKIP_TO_NEXT,
+        TrackPlayer.CAPABILITY_SKIP_TO_PREVIOUS,
     ],
 });
 

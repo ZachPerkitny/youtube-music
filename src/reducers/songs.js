@@ -30,11 +30,16 @@ export default function(state={
             });
         case constants.DELETE_SONG_SUCCESS: {
             const songs = Object.keys(state.songs).reduce((acc, id) => {
-                if (id != action.id) acc[id] = state.songs[id];
+                if (id !== action.id) acc[id] = state.songs[id];
                 return acc;
             }, {});
+            const index = state.ids.indexOf(action.id);
             return Object.assign({}, state, {
                 isDeleting: false,
+                ids: [
+                    ...state.ids.slice(0, index),
+                    ...state.ids.slice(index + 1),
+                ],
                 songs,
             });
         }
