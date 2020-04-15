@@ -80,7 +80,6 @@ export function addSong(url) {
             }));
             dispatch(addToast(`Successfully downloaded ${info.title}`));
         } catch (err) {
-            console.log(err);
             dispatch(addSongFailure());
             dispatch(addToast(`Error downloading from ${url}`));
         }
